@@ -1,38 +1,73 @@
 <script>
   import {outsideClick, createFillAll, azColumn, fillArea} from './actions';
+
   export let data = [];
 
-  $: fillAll = createFillAll(data.length, data[0].length);
+  $: rLen = data.length;
+  $: cLen = data[0].length;
+  $: fillAll = createFillAll(rLen, cLen);
   $: selection = fillAll(false);
 
-  var active = false;
+  var active = null;
 
   function tableClick(event) {
     const target = event.target;
     if (target.tagName !== 'TD') return;
 
-    const rInd = target.parentNode.rowIndex - 1;
-    const cInd = target.cellIndex - 1;
+    const rowI = target.parentNode.rowIndex - 1;
+    const colI = target.cellIndex - 1;
 
-    if (rInd === -1) {
-      if (cInd === -1) {
+    if (rowI === -1) {
+      // click in corner
+      if (colI === -1) {
         selection = fillAll(true);
         active = [0, 0];
+
+      // click in column
       } else {
-        selection = fillAll(false);
-        selection.forEach(row => row[cInd] = true);
-        active = [0, cInd];
+        if (event.shiftKey) {
+          selection = fillAll(false);
+          selection = fillArea(selection, [0, colI], [rLen - 1, active ? active[1] : colI], true);
+          active = active ?? [0, colI];
+
+        } else {
+          if (!event.ctrlKey && !event.metaKey)
+            selection = fillAll(false);
+          selection = fillArea(selection, [0, colI], [rLen - 1, colI], true);
+          active = [0, colI];
+        }
       }
 
-    } else if (cInd === -1) {
-      selection = fillAll(false);
-      selection[rInd].forEach((_, c, row) => row[c] = true);
-      active = [rInd, 0];
+      // if row
+    } else if (colI === -1) {
+      if (event.shiftKey) {
+          selection = fillAll(false);
+          selection = fillArea(selection, [rowI, 0], [active ? active[0] : rowI, cLen - 1], true);
+          active = active ?? [rowI, 0];
 
+        } else {
+          if (!event.ctrlKey && !event.metaKey)
+            selection = fillAll(false);
+          selection = fillArea(selection, [rowI, 0], [rowI, cLen - 1], true);
+          active = [rowI, 0];
+        }
+
+      // if not service cell
+    } else {
+      if (event.ctrlKey || event.metaKey) {
+        selection[rowI][colI] = !selection[rowI][colI];
+        active = [rowI, colI];
+
+      } else if (event.shiftKey) {
+        selection = fillAll(false);
+        selection = fillArea(selection, [rowI, colI], active, true);
+
+      } else {
+        selection = fillAll(false);
+        selection[rowI][colI] = true;
+        active = [rowI, colI];
+      }
     }
-
-
-
   }
 
 </script>
@@ -42,7 +77,7 @@
 <table
 use:outsideClick={() => {
   selection = fillAll(false);
-  active = false;
+  active = null;
 }}
 on:click={tableClick}
 >
@@ -78,7 +113,7 @@ on:click={tableClick}
 
   td {
     border: 1px solid #ccc;
-    padding: .5em 1em;
+    padding: .2em;
   }
 
   td.selected {
@@ -86,6 +121,6 @@ on:click={tableClick}
   }
 
   td.active {
-    outline: 2px solid blue;
+    box-shadow:  inset 0 0 0 1px blue;
   }
 </style>
