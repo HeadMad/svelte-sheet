@@ -14,9 +14,21 @@
   ["Hyundai", "Elantra", 2023, "Yellow", "2023-09-15"],
   ["Subaru", "Outback", 2018, "Brown", "2023-10-05"]
 ];
+
+var selection;
+
+function clear() {
+  cars = cars.filter((row, r) => selection[r].includes(true))
+  .filter((row, r));
+ 
+}
 </script>
 
 <h1>Cars</h1>
 
-<Sheet data={cars}/>
+<button on:click={clear}>Clear</button>
+
+<button on:click={() => cars = [['hello', 'me']]}>New data</button>
+
+<Sheet data={cars} bind:selection/>
 

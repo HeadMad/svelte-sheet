@@ -2,6 +2,7 @@
   import {outsideClick, createFillAll, azColumn, fillArea} from './actions';
 
   export let data = [];
+  export let selection = [];
 
   $: rLen = data.length;
   $: cLen = data[0].length;
@@ -105,8 +106,8 @@
 
 <table
 use:outsideClick={() => {
-  selection = fillAll(false);
-  active = null;
+  // selection = fillAll(false);
+  // active = null;
 }}
 
 on:mousedown={mouseDown}
