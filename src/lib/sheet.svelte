@@ -1,15 +1,21 @@
 <script>
-  import {outsideClick, createFillAll, azColumn, fillArea} from './actions';
+  import {outsideClick} from './actions';
+  import {createFillAll, azColumn, fillArea} from './utils';
 
-  export let data = [];
+  export let body = [];
   export let selection = [];
+  export let active = null;
 
-  $: rLen = data.length;
-  $: cLen = data[0].length;
-  $: fillAll = createFillAll(rLen, cLen);
-  $: selection = fillAll(false);
+  var rLen, cLen, fillAll;
 
-  var active = null;
+  $: if (body.length) {
+    rLen = body.length;
+    cLen = body[0].length;
+    fillAll = createFillAll(rLen, cLen);
+    selection = fillAll(false);
+    active = null;
+  }
+
   let isMouseDown = false;
 
   function mouseDown(event) {
@@ -102,7 +108,7 @@
 
 </script>
 
-<!-- {JSON.stringify(data)} -->
+<!-- {JSON.stringify(body)} -->
 
 <table
 use:outsideClick={() => {
@@ -116,11 +122,11 @@ on:mouseover={mouseOver}
 >
   <tr>
     <td></td>
-    {#each data[0] as _, i}
+    {#each body[0] as _, i}
       <td>{azColumn(i)}</td>
     {/each}
   </tr>
-  {#each data as row, r}
+  {#each body as row, r}
     <tr>
       <td>{r + 1}</td>
       {#each row as cell, c}

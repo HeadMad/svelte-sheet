@@ -1,5 +1,6 @@
 <script>
   import {Sheet} from '$lib';
+  import {cutSelectArea} from '$lib/filters';
 
   var cars = [
   ["Brand", "Model", "Year", "Color", "Date Added"],
@@ -17,18 +18,12 @@
 
 var selection;
 
-function clear() {
-  cars = cars.filter((row, r) => selection[r].includes(true))
-  .filter((row, r));
- 
-}
 </script>
 
 <h1>Cars</h1>
 
-<button on:click={clear}>Clear</button>
+<button on:click={() => cars = cutSelectArea(selection, cars)}>Cut</button>
 
-<button on:click={() => cars = [['hello', 'me']]}>New data</button>
 
-<Sheet data={cars} bind:selection/>
+<Sheet body={cars} bind:selection/>
 
