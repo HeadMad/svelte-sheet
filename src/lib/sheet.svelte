@@ -109,6 +109,7 @@
 </script>
 
 <!-- {JSON.stringify(body)} -->
+<svelte:window on:mouseup={mouseUp} />
 
 <table
 use:outsideClick={() => {
@@ -117,7 +118,6 @@ use:outsideClick={() => {
 }}
 
 on:mousedown={mouseDown}
-on:mouseup={mouseUp}
 on:mouseover={mouseOver}
 >
   <tr>
