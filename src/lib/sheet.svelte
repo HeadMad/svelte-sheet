@@ -69,12 +69,12 @@
 
       // if not service cell
     } else {
-      if (event.ctrlKey || event.metaKey) {
-        selection[rowI][colI] = !selection[rowI][colI];
-        active = [rowI, colI];
-      } else if (event.shiftKey) {
+      if (event.shiftKey) {
         selection = fillAll(false);
         selection = fillArea(selection, [rowI, colI], active, true);
+      } else if (event.ctrlKey || event.metaKey) {
+        selection[rowI][colI] = !selection[rowI][colI];
+        active = [rowI, colI];
       } else {
         selection = fillAll(false);
         selection[rowI][colI] = true;
@@ -123,7 +123,7 @@
 <table
   use:outsideClick={() => {
     // selection = fillAll(false);
-    // active = null;
+    active = null;
   }}
   on:mousedown={mouseDown}
   on:mouseover={mouseOver}
@@ -131,16 +131,19 @@
   <tr>
     <td align="right" valign="bottom">🡦</td>
     {#each body[0] as _, i}
-      <td class:has-selection={selection.some(row => row[i])}>{azColumn(i)}</td>
+      <td class:has-selection={selection.some((row) => row[i])}
+        >{azColumn(i)}</td
+      >
     {/each}
   </tr>
   {#each body as row, r}
     <tr>
       <td>{r + 1}</td>
       {#each row as cell, c}
-        
-          <td class:selected={selection[r][c]}>{cell}</td>
-
+        <td
+          class:active={active && active[0] === r && active[1] === c}
+          class:selected={selection[r][c]}>{cell}</td
+        >
       {/each}
     </tr>
   {/each}
@@ -157,13 +160,13 @@
     user-select: none;
   }
 
-  td:first-child:has(~.selected),
+  td:first-child:has(~ .selected),
   .has-selection {
-    background-color: #99bbe4;
+    background-color: #f0f7ff;
   }
 
   td {
-    border: 1px solid #ccc;
+    border: 1px solid #cccccc;
     padding: 0.2em;
   }
 
