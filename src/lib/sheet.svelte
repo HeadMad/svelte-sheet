@@ -1,6 +1,6 @@
 <script>
-  import {outsideClick} from './actions';
-  import {createFillAll, azColumn, fillArea} from './utils';
+  import { outsideClick } from "./actions";
+  import { createFillAll, azColumn, fillArea } from "./utils";
 
   export let body = [];
   export let selection = [];
@@ -21,7 +21,7 @@
   function mouseDown(event) {
     isMouseDown = true;
     const target = event.target;
-    if (target.tagName !== 'TD') return;
+    if (target.tagName !== "TD") return;
 
     const rowI = target.parentNode.rowIndex - 1;
     const colI = target.cellIndex - 1;
@@ -32,16 +32,19 @@
         selection = fillAll(true);
         active = [0, 0];
 
-      // click in column
+        // click in column
       } else {
         if (event.shiftKey) {
           selection = fillAll(false);
-          selection = fillArea(selection, [0, colI], [rLen - 1, active ? active[1] : colI], true);
+          selection = fillArea(
+            selection,
+            [0, colI],
+            [rLen - 1, active ? active[1] : colI],
+            true,
+          );
           active = active ?? [0, colI];
-
         } else {
-          if (!event.ctrlKey && !event.metaKey)
-            selection = fillAll(false);
+          if (!event.ctrlKey && !event.metaKey) selection = fillAll(false);
           selection = fillArea(selection, [0, colI], [rLen - 1, colI], true);
           active = [0, colI];
         }
@@ -50,27 +53,28 @@
       // if row
     } else if (colI === -1) {
       if (event.shiftKey) {
-          selection = fillAll(false);
-          selection = fillArea(selection, [rowI, 0], [active ? active[0] : rowI, cLen - 1], true);
-          active = active ?? [rowI, 0];
-
-        } else {
-          if (!event.ctrlKey && !event.metaKey)
-            selection = fillAll(false);
-          selection = fillArea(selection, [rowI, 0], [rowI, cLen - 1], true);
-          active = [rowI, 0];
-        }
+        selection = fillAll(false);
+        selection = fillArea(
+          selection,
+          [rowI, 0],
+          [active ? active[0] : rowI, cLen - 1],
+          true,
+        );
+        active = active ?? [rowI, 0];
+      } else {
+        if (!event.ctrlKey && !event.metaKey) selection = fillAll(false);
+        selection = fillArea(selection, [rowI, 0], [rowI, cLen - 1], true);
+        active = [rowI, 0];
+      }
 
       // if not service cell
     } else {
       if (event.ctrlKey || event.metaKey) {
         selection[rowI][colI] = !selection[rowI][colI];
         active = [rowI, colI];
-
       } else if (event.shiftKey) {
         selection = fillAll(false);
         selection = fillArea(selection, [rowI, colI], active, true);
-
       } else {
         selection = fillAll(false);
         selection[rowI][colI] = true;
@@ -85,55 +89,58 @@
 
   function mouseOver(event) {
     if (!isMouseDown) return;
-    console.log('OVER')
+    console.log("OVER");
     const target = event.target;
-    if (target.tagName !== 'TD') return;
+    if (target.tagName !== "TD") return;
     const rowI = target.parentNode.rowIndex - 1;
     const colI = target.cellIndex - 1;
 
     if (rowI === -1) {
-      if (colI === -1)
-        selection = fillAll(true);
+      if (colI === -1) selection = fillAll(true);
       else
-        selection = fillArea(fillAll(false), [0, colI], [rLen - 1, active ? active[1] : colI], true);
-      
+        selection = fillArea(
+          fillAll(false),
+          [0, colI],
+          [rLen - 1, active ? active[1] : colI],
+          true,
+        );
     } else if (colI === -1) {
-      selection = fillArea(fillAll(false), [active[0], 0], [rowI, cLen - 1], true);
-
-      
+      selection = fillArea(
+        fillAll(false),
+        [active[0], 0],
+        [rowI, cLen - 1],
+        true,
+      );
     } else {
       selection = fillArea(fillAll(false), [rowI, colI], active, true);
     }
   }
-
 </script>
 
 <!-- {JSON.stringify(body)} -->
 <svelte:window on:mouseup={mouseUp} />
 
 <table
-use:outsideClick={() => {
-  // selection = fillAll(false);
-  // active = null;
-}}
-
-on:mousedown={mouseDown}
-on:mouseover={mouseOver}
+  use:outsideClick={() => {
+    // selection = fillAll(false);
+    // active = null;
+  }}
+  on:mousedown={mouseDown}
+  on:mouseover={mouseOver}
 >
   <tr>
-    <td></td>
+    <td align="right" valign="bottom">🡦</td>
     {#each body[0] as _, i}
-      <td>{azColumn(i)}</td>
+      <td class:has-selection={selection.some(row => row[i])}>{azColumn(i)}</td>
     {/each}
   </tr>
   {#each body as row, r}
     <tr>
       <td>{r + 1}</td>
       {#each row as cell, c}
-        <td
-        class:active={active &&active[0] === r && active[1] === c}
-        class:selected={selection[r][c]}
-        >{cell}</td>
+        
+          <td class:selected={selection[r][c]}>{cell}</td>
+
       {/each}
     </tr>
   {/each}
@@ -150,9 +157,14 @@ on:mouseover={mouseOver}
     user-select: none;
   }
 
+  td:first-child:has(~.selected),
+  .has-selection {
+    background-color: #99bbe4;
+  }
+
   td {
     border: 1px solid #ccc;
-    padding: .2em;
+    padding: 0.2em;
   }
 
   td.selected {
@@ -160,6 +172,6 @@ on:mouseover={mouseOver}
   }
 
   td.active {
-    box-shadow:  inset 0 0 0 1px blue;
+    box-shadow: inset 0 0 0 1px blue;
   }
 </style>

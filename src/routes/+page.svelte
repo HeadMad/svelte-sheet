@@ -1,6 +1,6 @@
 <script>
   import {Sheet} from '$lib';
-  import {cutSelectArea} from '$lib/filters';
+  import {cutSelectArea, columnsSplice} from '$lib/filters';
 
   var cars = [
   ["Brand", "Model", "Year", "Color", "Date Added"],
@@ -23,6 +23,10 @@ var selection;
 <h1>Cars</h1>
 
 <button on:click={() => cars = cutSelectArea(selection, cars)}>Cut</button>
+<button on:click={() => {
+  cars.forEach((row) => row.splice(1, 0, ''));
+  cars = cars;
+}}>Insert</button>
 
 
 <Sheet body={cars} bind:selection/>
