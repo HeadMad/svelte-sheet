@@ -5,21 +5,38 @@ export default function(selection, data) {
   for (let r = 0; r < selection.length; r++) {
     let col = selection[r].indexOf(true);
     if (col === -1) continue;
-    rstart = rend =r;
-    cstart = col;
-    cend = selection[r].lastIndexOf(true);
+    rstart = rend = r;
     break;
   }
 
   for (let r = selection.length - 1; r > rstart; r--) {
-    console.log('second')
     let col = selection[r].indexOf(true);
     if (col === -1) continue;
     rend = r;
-    cstart = Math.min(cstart, col);
-    cend = Math.max(cend, selection[r].lastIndexOf(true));
     break;
   }
+  
+  for (let c = 0; c < selection[0].length; c++) {
+    for (let r = rstart; r <= rend; r++) {
+      if (selection[r][c]) {
+        cstart = c;
+        break;
+      }
+    }
+    if (cstart !== undefined) break;
+  }
+
+  for (let c = selection[0].length - 1; c > cstart; c--) {
+    for (let r = rstart; r <= rend; r++) { 
+      if (selection[r][c]) {
+        cend = c;
+        break;
+      }
+    }
+    if (cend !== undefined) break;
+  }
+
+  console.log({rstart, rend, cstart, cend});
 
   let n = 0;
   for (let r = rstart; r <= rend; r++) {

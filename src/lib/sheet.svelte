@@ -123,7 +123,7 @@
 <table
   use:outsideClick={() => {
     // selection = fillAll(false);
-    active = null;
+    // active = null;
   }}
   on:mousedown={mouseDown}
   on:mouseover={mouseOver}
@@ -163,6 +163,7 @@
   td:first-child:has(~ .selected),
   .has-selection {
     background-color: #f0f7ff;
+    outline: 1px solid #4d9dff;
   }
 
   td {
