@@ -19,7 +19,7 @@ export default function(selection, data) {
   for (let c = 0; c < selection[0].length; c++) {
     for (let r = rstart; r <= rend; r++) {
       if (selection[r][c]) {
-        cstart = c;
+        cstart = cend = c;
         break;
       }
     }

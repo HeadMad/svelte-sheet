@@ -24,7 +24,7 @@ var selection;
 
 <button on:click={() => cars = cutSelectArea(selection, cars)}>Cut</button>
 <button on:click={() => {
-  cars.forEach((row) => row.splice(1, 0, ''));
+  cars.forEach((row) => row.splice(1, 0, row[1]));
   cars = cars;
 }}>Insert</button>
 
